@@ -23,6 +23,7 @@ import java.io.File;
 import java.io.IOException;
 
 import static android.Manifest.permission.RECORD_AUDIO;
+import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     private Button play;
@@ -44,6 +45,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_main);
         fileName = Environment.getExternalStorageDirectory().getAbsolutePath()
                 + "/myaudio.3gp";
+//        fileName = Environment.getExternalStorageDirectory() + File.separator
+//                + Environment.DIRECTORY_DCIM + File.separator + "FILE_NAME";
         play = findViewById(R.id.play);
         stop = findViewById(R.id.stop);
         record = findViewById(R.id.record);
@@ -60,13 +63,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private boolean checkPermission() {
         int result = ContextCompat.checkSelfPermission(getApplicationContext(), RECORD_AUDIO);
+        int result1 = ContextCompat.checkSelfPermission(getApplicationContext(), WRITE_EXTERNAL_STORAGE);
 
-        return result == PackageManager.PERMISSION_GRANTED;
+        return result == PackageManager.PERMISSION_GRANTED&&result1==PackageManager.PERMISSION_GRANTED;
+
     }
 
     private void requestPermission() {
 
-        ActivityCompat.requestPermissions(this, new String[]{RECORD_AUDIO}, PERMISSION_REQUEST_CODE);
+        ActivityCompat.requestPermissions(this, new String[]{RECORD_AUDIO,WRITE_EXTERNAL_STORAGE}, PERMISSION_REQUEST_CODE);
 
     }
 
@@ -77,7 +82,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case PERMISSION_REQUEST_CODE:
                 if (grantResults.length > 0) {
                     boolean audioaccepted = grantResults[0] == PackageManager.PERMISSION_GRANTED;
-                    if (audioaccepted) {
+                    boolean writeexternalstorageaccepted = grantResults[1] == PackageManager.PERMISSION_GRANTED;
+                    if (audioaccepted&&writeexternalstorageaccepted) {
                         Toast.makeText(this, "Permission Granted", Toast.LENGTH_SHORT).show();
                     } else {
                         Toast.makeText(this, "Permission not Granted", Toast.LENGTH_SHORT).show();
@@ -90,8 +96,42 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                             @Override
                                             public void onClick(DialogInterface dialog, int which) {
                                                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                                                    requestPermissions(new String[]{RECORD_AUDIO},
+                                                    requestPermissions(new String[]{RECORD_AUDIO,WRITE_EXTERNAL_STORAGE},
                                                             PERMISSION_REQUEST_CODE);
+
+
+
+
+
+
+//                                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+//                                                        if (shouldShowRequestPermissionRationale(ACCESS_FINE_LOCATION)) {
+//                                                            showMessageOKCancel("You need to allow access to both the permissions",
+//                                                                    new DialogInterface.OnClickListener() {
+//                                                                        @Override
+//                                                                        public void onClick(DialogInterface dialog, int which) {
+//                                                                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+//                                                                                requestPermissions(new String[]{ACCESS_FINE_LOCATION, CAMERA},
+//                                                                                        PERMISSION_REQUEST_CODE);
+//                                                                            }
+//                                                                        }
+//                                                                    });
+//                                                            return;
+//                                                        }
+//                                                    }
+//
+//                                                }
+//                                            }
+//
+//
+//                break;
+//                                        }
+
+
+
+
+
+
                                                 }
                                             }
                                         });
@@ -194,3 +234,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 }
+
+
+
